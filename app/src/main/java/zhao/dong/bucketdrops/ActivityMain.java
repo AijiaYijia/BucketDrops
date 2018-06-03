@@ -13,6 +13,8 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import zhao.dong.bucketdrops.adapters.AdapterDrops;
+import zhao.dong.bucketdrops.adapters.AddListener;
+import zhao.dong.bucketdrops.adapters.Divider;
 import zhao.dong.bucketdrops.beans.Drop;
 import zhao.dong.bucketdrops.widgets.BucketRecyclerView;
 
@@ -32,6 +34,13 @@ public class ActivityMain extends AppCompatActivity {
         }
     };
 
+    private AddListener mAddListener = new AddListener() {
+        @Override
+        public void add() {
+            showDialogAdd();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +56,12 @@ public class ActivityMain extends AppCompatActivity {
         mEmptyView = findViewById(R.id.empty_drops);
 
         mRecycler = findViewById(R.id.rv_drops);
+        mRecycler.addItemDecoration(new Divider(this, LinearLayoutManager.VERTICAL));
         mRecycler.hideIfEmpty(mToolbar);
         mRecycler.showIfEmpty(mEmptyView);
 
         mAdapter = new AdapterDrops(this, mResults);
+        mAdapter.setAddListener(mAddListener);
         mRecycler.setAdapter(mAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         mRecycler.setLayoutManager(manager);
