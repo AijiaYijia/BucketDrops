@@ -9,23 +9,26 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 import zhao.dong.bucketdrops.R;
 import zhao.dong.bucketdrops.beans.Drop;
 
-public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SwipeListener {
 
     public static final int ITEM = 0;
     public static final int FOOTER = 1;
 
+    private Realm mRealm;
     private LayoutInflater mInflater;
     private RealmResults<Drop> mResults;
 
     private AddListener mAddListener;
 
-    public AdapterDrops(Context context, RealmResults<Drop> results) {
+    public AdapterDrops(Context context, Realm realm, RealmResults<Drop> results) {
 
         mInflater = LayoutInflater.from(context);
+        mRealm = realm;
         update(results);
     }
 
@@ -76,7 +79,22 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemCount() {
 
-        return mResults.size() + 1;
+        if (mResults == null || mResults.isEmpty()) {
+            return 0;
+        } else {
+            return mResults.size() + 1;
+        }
+    }
+
+    @Override
+    public void onSwipe(int position) {
+
+        if (position < mResults.size()) {
+            mRealm.beginTransaction();
+            mResults.get(position).deleteFromRealm();
+            mRealm.commitTransaction();
+            notifyItemRemoved(position);
+        }
     }
 
     public static class DropHolder extends RecyclerView.ViewHolder {

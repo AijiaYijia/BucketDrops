@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -15,6 +16,7 @@ import io.realm.RealmResults;
 import zhao.dong.bucketdrops.adapters.AdapterDrops;
 import zhao.dong.bucketdrops.adapters.AddListener;
 import zhao.dong.bucketdrops.adapters.Divider;
+import zhao.dong.bucketdrops.adapters.SimpleTouchCallback;
 import zhao.dong.bucketdrops.beans.Drop;
 import zhao.dong.bucketdrops.widgets.BucketRecyclerView;
 
@@ -60,11 +62,15 @@ public class ActivityMain extends AppCompatActivity {
         mRecycler.hideIfEmpty(mToolbar);
         mRecycler.showIfEmpty(mEmptyView);
 
-        mAdapter = new AdapterDrops(this, mResults);
+        mAdapter = new AdapterDrops(this, mRealm, mResults);
         mAdapter.setAddListener(mAddListener);
         mRecycler.setAdapter(mAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         mRecycler.setLayoutManager(manager);
+
+        SimpleTouchCallback callback = new SimpleTouchCallback(mAdapter);
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(mRecycler);
     }
 
     @Override
