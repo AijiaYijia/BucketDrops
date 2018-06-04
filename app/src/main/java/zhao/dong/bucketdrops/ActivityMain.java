@@ -15,6 +15,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import zhao.dong.bucketdrops.adapters.AdapterDrops;
 import zhao.dong.bucketdrops.adapters.AddListener;
+import zhao.dong.bucketdrops.adapters.CompleteListener;
 import zhao.dong.bucketdrops.adapters.Divider;
 import zhao.dong.bucketdrops.adapters.SimpleTouchCallback;
 import zhao.dong.bucketdrops.beans.Drop;
@@ -43,6 +44,20 @@ public class ActivityMain extends AppCompatActivity {
         }
     };
 
+    private MarkListener mMarkListener = new MarkListener() {
+        @Override
+        public void onMark(int position) {
+            showDialogMark(position);
+        }
+    };
+
+    private CompleteListener mCompleteListener = new CompleteListener() {
+        @Override
+        public void onComplete(int position) {
+            mAdapter.markComplete(position);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +77,7 @@ public class ActivityMain extends AppCompatActivity {
         mRecycler.hideIfEmpty(mToolbar);
         mRecycler.showIfEmpty(mEmptyView);
 
-        mAdapter = new AdapterDrops(this, mRealm, mResults);
+        mAdapter = new AdapterDrops(this, mRealm, mResults, mMarkListener);
         mAdapter.setAddListener(mAddListener);
         mRecycler.setAdapter(mAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -102,5 +117,15 @@ public class ActivityMain extends AppCompatActivity {
 
         DialogAdd dialog = new DialogAdd();
         dialog.show(getSupportFragmentManager(), "Add");
+    }
+
+    private void showDialogMark(int position) {
+
+        DialogMark dialog = new DialogMark();
+        Bundle bundle = new Bundle();
+        bundle.putInt("POSITION", position);
+        dialog.setArguments(bundle);
+        dialog.setCompleteListener(mCompleteListener);
+        dialog.show(getSupportFragmentManager(), "Mark");
     }
 }
