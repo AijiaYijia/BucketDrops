@@ -3,4 +3,5 @@
     <string name="str_add_drop">Add a drop</string>
     <string name="hint_et_drop">What is it?</string>
     <string name="str_add_it">Add it</string>
+    <string name="str_no_items">No Item To Display</string>
 </resources>

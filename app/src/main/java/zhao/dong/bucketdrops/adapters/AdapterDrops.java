@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import zhao.dong.bucketdrops.MarkListener;
+import zhao.dong.bucketdrops.AppBucketDrops;
 import zhao.dong.bucketdrops.R;
 import zhao.dong.bucketdrops.beans.Drop;
 import zhao.dong.bucketdrops.extras.Util;
@@ -22,7 +22,11 @@ import zhao.dong.bucketdrops.extras.Util;
 public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SwipeListener {
 
     public static final int ITEM = 0;
-    public static final int FOOTER = 1;
+    public static final int NO_ITEM = 1;
+    public static final int FOOTER = 2;
+
+    public static final int COUNT_FOOTER = 1;
+    public static final int COUNT_NO_ITEMS = 1;
 
     private Realm mRealm;
     private LayoutInflater mInflater;
@@ -30,19 +34,37 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private AddListener mAddListener;
     private MarkListener mMarkListener;
+    private ResetListener mResetListener;
 
-    public AdapterDrops(Context context, Realm realm, RealmResults<Drop> results, MarkListener markListener) {
+    private int mFilterOption;
 
+    private Context mContext;
+
+    public AdapterDrops(Context context, Realm realm, RealmResults<Drop> results, MarkListener markListener, ResetListener resetListener) {
+
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         mRealm = realm;
         update(results);
         mMarkListener = markListener;
+        mResetListener = resetListener;
     }
 
     public void update(RealmResults<Drop> results) {
 
         mResults = results;
+        mFilterOption = AppBucketDrops.load(mContext);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public long getItemId(int position) {
+
+        if (position < mResults.size()) {
+            return mResults.get(position).getAdded();
+        }
+
+        return RecyclerView.NO_ID;
     }
 
     public void setAddListener(AddListener listener) {
@@ -53,10 +75,22 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
 
-        if (mResults == null || position < mResults.size()) {
-            return ITEM;
+        if (!mResults.isEmpty()) {
+            if (position < mResults.size()) {
+                return ITEM;
+            } else {
+                return FOOTER;
+            }
         } else {
-            return FOOTER;
+            if (mFilterOption == Filter.COMPLETE || mFilterOption == Filter.INCOMPLETE) {
+                if (position == 0) {
+                    return NO_ITEM;
+                } else {
+                    return FOOTER;
+                }
+            } else {
+                return ITEM;
+            }
         }
     }
 
@@ -67,6 +101,9 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (viewType == FOOTER) {
             View view = mInflater.inflate(R.layout.footer, parent, false);
             return new FooterHolder(view);
+        } else if (viewType == NO_ITEM) {
+            View view = mInflater.inflate(R.layout.no_item, parent, false);
+            return new NoItemsHolder(view);
         } else {
             View view = mInflater.inflate(R.layout.row_drop, parent, false);
             return new DropHolder(view, mMarkListener);
@@ -88,10 +125,16 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemCount() {
 
-        if (mResults == null || mResults.isEmpty()) {
-            return 0;
+        if (!mResults.isEmpty()) {
+            return mResults.size() + COUNT_FOOTER;
         } else {
-            return mResults.size() + 1;
+            if (mFilterOption == Filter.MOST_TIME_LEFT
+                    || mFilterOption == Filter.LEAST_TIME_LEFT
+                    || mFilterOption == Filter.NONE) {
+                return 0;
+            } else {
+                return COUNT_NO_ITEMS + COUNT_FOOTER;
+            }
         }
     }
 
@@ -103,6 +146,16 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mResults.get(position).deleteFromRealm();
             mRealm.commitTransaction();
             notifyItemRemoved(position);
+        }
+
+        resetFilterIfEmpty();
+    }
+
+    private void resetFilterIfEmpty() {
+
+        if (mResults.isEmpty() && (mFilterOption == Filter.COMPLETE || mFilterOption == Filter.INCOMPLETE)) {
+
+            mResetListener.onReset();
         }
     }
 
@@ -163,6 +216,13 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
 
             Util.setBackground(mItemView, drawable);
+        }
+    }
+
+    public static class NoItemsHolder extends RecyclerView.ViewHolder {
+
+        public NoItemsHolder(View itemView) {
+            super(itemView);
         }
     }
 
