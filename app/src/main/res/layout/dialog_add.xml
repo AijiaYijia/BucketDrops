@@ -1,50 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dialog">
 
-    <TextView
-        android:id="@+id/tv_title"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/tv_title_vertical_margin"
-        android:layout_marginTop="@dimen/tv_title_vertical_margin"
-        android:text="@string/str_add_drop"
-        android:textSize="@dimen/tv_title_font_size" />
+        android:layout_height="match_parent"
+        android:padding="24dp">
 
-    <ImageButton
-        android:id="@+id/btn_close"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_alignBottom="@+id/tv_title"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/tv_title"
-        android:background="@null"
-        android:src="@drawable/ic_close" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/tv_title_vertical_margin"
+            android:layout_marginTop="@dimen/tv_title_vertical_margin"
+            android:text="@string/str_add_drop"
+            android:textSize="@dimen/tv_title_font_size" />
 
-    <EditText
-        android:id="@+id/et_drop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_title"
-        android:hint="@string/hint_et_drop"
-        android:inputType="textVisiblePassword"
-        android:padding="16dp" />
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_alignBottom="@+id/tv_title"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/tv_title"
+            android:background="@null"
+            android:src="@drawable/ic_close" />
 
-    <DatePicker
-        android:id="@+id/bpv_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/et_drop" />
+        <EditText
+            android:id="@+id/et_drop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title"
+            android:background="@drawable/bg_et_drop"
+            android:hint="@string/hint_et_drop"
+            android:inputType="textVisiblePassword"
+            android:padding="16dp" />
 
-    <Button
-        android:id="@+id/btn_add_it"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bpv_date"
-        android:text="@string/str_add_it"
-        android:textAllCaps="false" />
+        <zhao.dong.bucketdrops.widgets.BucketPickerView
+            android:id="@+id/bpv_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_drop"
+            android:layout_marginBottom="64dp"
+            android:layout_marginTop="64dp" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_add_it"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bpv_date"
+            android:background="@drawable/bg_btn_add_it"
+            android:text="@string/str_add_it"
+            android:textAllCaps="false"
+            android:textSize="28sp" />
+
+    </RelativeLayout>
+</ScrollView>

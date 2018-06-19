@@ -1,6 +1,7 @@
 package zhao.dong.bucketdrops.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -184,6 +185,9 @@ public class AdapterDrops extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mContext = itemView.getContext();
             mTextWhat = itemView.findViewById(R.id.tv_what);
             mTextWhen = itemView.findViewById(R.id.tv_when);
+
+            AppBucketDrops.setRalewayRegular(mContext, mTextWhat, mTextWhen);
+
             mMarkListener = listener;
 
             itemView.setOnClickListener(this);
