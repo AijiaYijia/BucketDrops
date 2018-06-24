@@ -26,6 +26,7 @@ import zhao.dong.bucketdrops.adapters.MarkListener;
 import zhao.dong.bucketdrops.adapters.ResetListener;
 import zhao.dong.bucketdrops.adapters.SimpleTouchCallback;
 import zhao.dong.bucketdrops.beans.Drop;
+import zhao.dong.bucketdrops.extras.Util;
 import zhao.dong.bucketdrops.widgets.BucketRecyclerView;
 
 public class ActivityMain extends AppCompatActivity {
@@ -106,6 +107,8 @@ public class ActivityMain extends AppCompatActivity {
         SimpleTouchCallback callback = new SimpleTouchCallback(mAdapter);
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(mRecycler);
+
+        Util.scheduleAlarm(this);
     }
 
     @Override
